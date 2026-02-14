@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jobsearch
+    username: jobuser
+    password: jobpass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+gcp:
+  bucket: jobsearch-cv-bucket-dev
+  credentials-path: /Users/aymericmaillot/IdeaProjects/jobSearch/secrets/projet-perso-466112-2cea5677d075.json
+
+n8n:
+  webhook:
+    url: https://n8n.srv1369661.hstgr.cloud/webhook-test/ae2883d9-ae48-4aa4-9723-88b6cde3193f
+    api-key: ${n8nApiKey}
+
