@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.springframework.stereotype.Service
-import tools.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 
 @Service
 class N8nService(
@@ -16,11 +16,11 @@ class N8nService(
 
     private val client = OkHttpClient()
 
-    fun trigger(request: TriggerN8nRequest, username: String): N8nResponse {
+    fun trigger(request: TriggerN8nRequest, username: String, targetLine: String): N8nResponse {
 
         val payload = N8nPayload(
             jobTitle = request.jobTitle,
-            company = request.company,
+            targetLine = targetLine,
             userName = username
         )
 
@@ -33,14 +33,11 @@ class N8nService(
             .build()
 
         client.newCall(httpRequest).execute().use { response ->
-
             if (!response.isSuccessful) {
                 throw RuntimeException("n8n call failed: ${response.code}")
             }
 
-            val body = response.body?.string()
-                ?: throw RuntimeException("Empty response from n8n")
-
+            val body = response.body?.string() ?: throw RuntimeException("Empty response from n8n")
             return objectMapper.readValue(body, N8nResponse::class.java)
         }
     }

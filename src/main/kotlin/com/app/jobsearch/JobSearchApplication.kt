@@ -5,6 +5,7 @@ import com.app.jobsearch.core.config.N8nProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
 @EnableConfigurationProperties(N8nProperties::class, GcpProperties::class)

@@ -1,6 +1,8 @@
 package com.app.jobsearch.modules.curriculum
 
 import com.app.jobsearch.auth.UserRepository
+import com.app.jobsearch.joboffer.FileStorage
+import com.app.jobsearch.openai.OpenAiService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -13,39 +15,44 @@ import java.util.UUID
 @RequestMapping("/api/curriculum")
 class CurriculumController(
     private val n8nService: N8nService,
-    private val storageService: GcpStorageService,
+    private val fileStorage: FileStorage,
     private val curriculumRepository: CurriculumRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val openAiService: OpenAiService
 ) {
 
+
     @PostMapping("/trigger")
-    fun trigger(
-        @Valid @RequestBody request: TriggerN8nRequest,
-        authentication: Authentication
-    ): ResponseEntity<Map<String, String>> {
-
+    fun trigger(@Valid @RequestBody request: TriggerN8nRequest, authentication: Authentication):
+            ResponseEntity<Map<String, String>> {
         val email = authentication.name
-
-        val user = userRepository.findByEmail(email)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-
+        val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
         val pseudo = user.pseudo
 
-        val n8nResponse = n8nService.trigger(request, pseudo)
+        val targetLine = try {
+            openAiService.generateTargetLine(request.jobTitle, request.description)
+        } catch (e: Exception) {
+            "Je recherche un poste de ${request.jobTitle}."
+        }
+
+        val n8nResponse = n8nService.trigger(
+            request = request,
+            username = pseudo,
+            targetLine = targetLine
+        )
 
         val storagePath = n8nResponse.fileId
-
         val saved = curriculumRepository.save(
             CurriculumEntity(
                 userName = pseudo,
                 jobTitle = request.jobTitle,
-                company = request.company,
+                description = request.description,
+                targetLine = targetLine,
                 storagePath = storagePath
             )
         )
 
-        val signedUrl = storageService.generateSignedUrl(storagePath)
-
+        val signedUrl = fileStorage.generateSignedUrl(storagePath)
         return ResponseEntity.ok(
             mapOf(
                 "id" to saved.id.toString(),
@@ -63,19 +70,16 @@ class CurriculumController(
 
         val email = authentication.name
 
-        val user = userRepository.findByEmail(email)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
 
         val curriculum = curriculumRepository.findById(id)
-            .orElseThrow {
-                ResponseStatusException(HttpStatus.NOT_FOUND, "Curriculum not found")
-            }
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Curriculum not found") }
 
         if (curriculum.userName != user.pseudo) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied")
         }
 
-        val url = storageService.generateSignedUrl(curriculum.storagePath)
+        val url = fileStorage.generateSignedUrl(curriculum.storagePath)
 
         return ResponseEntity.ok(
             mapOf("url" to url.toString())
@@ -106,10 +110,10 @@ class CurriculumController(
         return curriculums.map {
             mapOf(
                 "id" to it.id.toString(),
-                "url" to storageService.generateSignedUrl(it.storagePath).toString(),
+                "url" to fileStorage.generateSignedUrl(it.storagePath).toString(),
                 "createdAt" to it.createdAt.toString(),
                 "jobTitle" to it.jobTitle,
-                "company" to it.company
+                "targetLine" to it.targetLine
             )
         }
     }

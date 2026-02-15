@@ -1,0 +1,71 @@
+package com.app.jobsearch.joboffer
+
+import com.app.jobsearch.joboffer.dto.CreateJobOfferRequest
+import com.app.jobsearch.joboffer.dto.JobOfferResponse
+import com.app.jobsearch.joboffer.dto.UpdateJobOfferRequest
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import java.util.UUID
+
+@RestController
+@RequestMapping("/api/job-offers")
+class JobOfferController(private val service: JobOfferService, private val csvImporter: JobOfferCsvImporter) : JobOfferApi {
+
+    @PostMapping
+    override fun create(@RequestBody request: CreateJobOfferRequest): ResponseEntity<JobOfferResponse> =
+        ResponseEntity.ok(service.create(request))
+
+    @GetMapping
+    override fun getAll(
+        pageable: Pageable,
+        @RequestParam(required = false) remote: Boolean?,
+        @RequestParam(required = false) location: String?,
+        @RequestParam(required = false) contractType: ContractType?,
+        @RequestParam(required = false) enterprises: List<String>?,
+        @RequestParam(required = false) skills: List<String>?
+    ): ResponseEntity<Page<JobOfferResponse>> {
+        val criteria = JobOfferCriteria(
+            remote = remote,
+            location = location,
+            contractType = contractType,
+            enterprises = enterprises,
+            skills = skills
+        )
+
+        return ResponseEntity.ok(service.findAll(pageable, criteria))
+    }
+
+
+    @GetMapping("/{id}")
+    override fun getById(@PathVariable id: UUID): ResponseEntity<JobOfferResponse> =
+        ResponseEntity.ok(service.findById(id))
+
+
+    @PutMapping("/{id}")
+    override fun update(@PathVariable id: UUID, @RequestBody request: UpdateJobOfferRequest): ResponseEntity<JobOfferResponse> =
+        ResponseEntity.ok(service.update(id, request))
+
+
+    @DeleteMapping("/{id}")
+    override fun delete(@PathVariable id: UUID): ResponseEntity<Void> {
+        service.delete(id)
+        return ResponseEntity.noContent().build()
+    }
+
+
+    @PostMapping("/import")
+    override fun importCsv(@RequestParam("file") file: MultipartFile): ResponseEntity<Map<String, Any>> {
+        val requests = csvImporter.parse(file.inputStream)
+        service.importBulk(requests)
+
+        return ResponseEntity.ok(
+            mapOf(
+                "imported" to requests.size,
+                "status" to "SUCCESS"
+            )
+        )
+    }
+}

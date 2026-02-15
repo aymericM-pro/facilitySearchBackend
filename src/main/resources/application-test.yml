@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: test
-
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -14,6 +10,12 @@ spring:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
 
+  security:
+    enabled: false
   h2:
     console:
       enabled: true
+
+gcp:
+  bucket: test-bucket
+  credentials-path: src/test/resources/fake.json

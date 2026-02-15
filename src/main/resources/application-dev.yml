@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
-
   datasource:
     url: jdbc:postgresql://localhost:5432/jobsearch
     username: jobuser
@@ -10,9 +6,18 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+
 
 gcp:
   bucket: jobsearch-cv-bucket-dev
@@ -23,3 +28,5 @@ n8n:
     url: https://n8n.srv1369661.hstgr.cloud/webhook-test/ae2883d9-ae48-4aa4-9723-88b6cde3193f
     api-key: ${n8nApiKey}
 
+openai:
+  api-key: ${OPENAI_API_KEY}

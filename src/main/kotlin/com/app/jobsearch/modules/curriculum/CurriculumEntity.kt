@@ -18,8 +18,11 @@ class CurriculumEntity(
     @Column(nullable = false)
     val jobTitle: String,
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    val description: String,
+
     @Column(nullable = false)
-    val company: String,
+    val targetLine: String,
 
     @Column(nullable = false)
     val storagePath: String,
