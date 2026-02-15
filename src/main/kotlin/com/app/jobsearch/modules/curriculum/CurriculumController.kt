@@ -3,7 +3,6 @@ package com.app.jobsearch.modules.curriculum
 import com.app.jobsearch.auth.UserRepository
 import com.app.jobsearch.joboffer.FileStorage
 import com.app.jobsearch.openai.OpenAiService
-import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
@@ -23,36 +22,31 @@ class CurriculumController(
 
 
     @PostMapping("/trigger")
-    fun trigger(@Valid @RequestBody request: TriggerN8nRequest, authentication: Authentication):
-            ResponseEntity<Map<String, String>> {
-        val email = authentication.name
-        val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        val pseudo = user.pseudo
+    fun trigger(@RequestBody request: TriggerN8nRequest, authentication: Authentication): ResponseEntity<Map<String, String>> {
 
-        val targetLine = try {
-            openAiService.generateTargetLine(request.jobTitle, request.description)
-        } catch (e: Exception) {
-            "Je recherche un poste de ${request.jobTitle}."
-        }
+        val email = authentication.name
+        val user = userRepository.findByEmail(email)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+
+        val pseudo = user.pseudo
 
         val n8nResponse = n8nService.trigger(
             request = request,
             username = pseudo,
-            targetLine = targetLine
+            targetLine = request.targetLine
         )
 
-        val storagePath = n8nResponse.fileId
         val saved = curriculumRepository.save(
             CurriculumEntity(
                 userName = pseudo,
                 jobTitle = request.jobTitle,
-                description = request.description,
-                targetLine = targetLine,
-                storagePath = storagePath
+                targetLine = request.targetLine,
+                storagePath = n8nResponse.fileId
             )
         )
 
-        val signedUrl = fileStorage.generateSignedUrl(storagePath)
+        val signedUrl = fileStorage.generateSignedUrl(saved.storagePath)
+
         return ResponseEntity.ok(
             mapOf(
                 "id" to saved.id.toString(),

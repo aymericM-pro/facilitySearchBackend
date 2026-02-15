@@ -8,5 +8,5 @@ data class TriggerN8nRequest(
     val jobTitle: String,
 
     @field:NotBlank
-    val description: String
+    val targetLine: String
 )

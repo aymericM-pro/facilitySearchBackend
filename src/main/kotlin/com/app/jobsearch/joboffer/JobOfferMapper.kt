@@ -16,7 +16,7 @@ class JobOfferMapper {
             company = request.company,
             location = request.location,
             description = request.description,
-            tags = request.tags ?: emptyList(),
+            tags = normalizeTags(request.tags),
             remote = request.remote ?: false,
             salaryMin = request.salaryMin,
             salaryMax = request.salaryMax,
@@ -55,4 +55,15 @@ class JobOfferMapper {
         dto.salaryMax?.let { entity.salaryMax = it }
         dto.contractType?.let { entity.contractType = it }
     }
+
+    private fun normalizeTags(tags: List<String>?): List<String> {
+        if (tags == null) return emptyList()
+
+        return tags
+            .flatMap { it.split(";") }
+            .map { it.trim().lowercase() }
+            .filter { it.isNotBlank() }
+            .distinct()
+    }
+
 }
