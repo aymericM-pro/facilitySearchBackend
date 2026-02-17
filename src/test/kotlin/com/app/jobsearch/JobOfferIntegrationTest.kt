@@ -1,29 +1,40 @@
 package com.app.jobsearch
 
-
 import com.app.jobsearch.core.error.BusinessException
-import com.app.jobsearch.joboffer.ContractType
-import com.app.jobsearch.joboffer.JobOfferCriteria
-import com.app.jobsearch.joboffer.JobOfferMapper
-import com.app.jobsearch.joboffer.JobOfferService
-import com.app.jobsearch.joboffer.dto.CreateJobOfferRequest
-import com.app.jobsearch.joboffer.dto.JobOfferResponse
-import com.app.jobsearch.joboffer.dto.UpdateJobOfferRequest
+import com.app.jobsearch.modules.companies.CompanyEntity
+import com.app.jobsearch.modules.companies.CompanyRepository
+import com.app.jobsearch.modules.joboffer.ContractType
+import com.app.jobsearch.modules.joboffer.JobOfferCriteria
+import com.app.jobsearch.modules.joboffer.JobOfferService
+import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
+import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.util.UUID
 
 @Transactional
 class JobOfferIntegrationTest(
-    @Autowired val service: JobOfferService
+    @Autowired val service: JobOfferService,
+    @Autowired val companyRepository: CompanyRepository
 ) : IntegrationTestBase() {
+
+    private lateinit var company: CompanyEntity
+
+    @BeforeEach
+    fun setup() {
+        company = companyRepository.save(
+            CompanyEntity(
+                name = "Agate IT",
+                city = "Paris"
+            )
+        )
+    }
 
     @Test
     fun testIntegrationCreateFull() {
@@ -90,9 +101,14 @@ class JobOfferIntegrationTest(
             service.create(
                 CreateJobOfferRequest(
                     title = "Invalid",
-                    company = "Company",
+                    companyId = company.id!!,
+                    location = null,
+                    description = null,
+                    skills = emptyList(),
+                    remote = false,
                     salaryMin = BigDecimal(70000),
-                    salaryMax = BigDecimal(50000)
+                    salaryMax = BigDecimal(50000),
+                    contractType = ContractType.CDI
                 )
             )
         }
@@ -101,10 +117,10 @@ class JobOfferIntegrationTest(
     private fun fullRequest() =
         CreateJobOfferRequest(
             title = "Senior Kotlin Backend Engineer",
-            company = "Agate IT",
+            companyId = company.id!!,
             location = "Paris",
             description = "Backend Kotlin, Spring Boot, Hexagonal architecture",
-            tags = listOf("Kotlin", "Spring Boot", "PostgreSQL", "AWS"),
+            skills = listOf("Kotlin", "Spring Boot", "PostgreSQL", "AWS"),
             remote = true,
             salaryMin = BigDecimal(55000),
             salaryMax = BigDecimal(70000),
@@ -117,10 +133,14 @@ class JobOfferIntegrationTest(
     ) {
         assertNotNull(actual.id)
         assertEquals(expected.title, actual.title)
-        assertEquals(expected.company, actual.company)
+        assertEquals(expected.companyId, actual.companyId)
         assertEquals(expected.location, actual.location)
         assertEquals(expected.description, actual.description)
-        assertEquals(expected.tags, actual.tags)
+        assertEquals(
+            (expected.skills ?: emptyList()).map { it.lowercase() }.sorted(),
+            actual.skills.map { it.lowercase() }.sorted()
+        )
+
         assertEquals(expected.remote, actual.remote)
         assertEquals(expected.salaryMin, actual.salaryMin)
         assertEquals(expected.salaryMax, actual.salaryMax)

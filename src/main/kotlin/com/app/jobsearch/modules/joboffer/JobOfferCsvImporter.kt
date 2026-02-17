@@ -1,6 +1,6 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
-import com.app.jobsearch.joboffer.dto.CreateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import java.io.InputStream
 
 fun interface JobOfferCsvImporter {

@@ -1,4 +1,4 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
 import org.springframework.data.jpa.domain.Specification
 import jakarta.persistence.criteria.Predicate

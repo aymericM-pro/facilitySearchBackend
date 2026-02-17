@@ -1,8 +1,9 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
-import com.app.jobsearch.joboffer.dto.CreateJobOfferRequest
-import com.app.jobsearch.joboffer.dto.JobOfferResponse
-import com.app.jobsearch.joboffer.dto.UpdateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
+import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
+import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -40,6 +41,7 @@ interface JobOfferApi {
         ]
     )
     fun getAll(
+        @Parameter(hidden = true)
         pageable: Pageable,
         remote: Boolean?,
         location: String?,

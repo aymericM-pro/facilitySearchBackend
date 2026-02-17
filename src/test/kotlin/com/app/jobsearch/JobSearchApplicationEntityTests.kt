@@ -12,7 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest
 @ActiveProfiles("test")
-class JobSearchApplicationTests {
+class JobSearchApplicationEntityTests : IntegrationTestBase() {
 
     @Test
     fun contextLoads() {}

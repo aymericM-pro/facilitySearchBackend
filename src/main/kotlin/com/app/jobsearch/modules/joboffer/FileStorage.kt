@@ -1,4 +1,4 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
 import java.net.URL
 

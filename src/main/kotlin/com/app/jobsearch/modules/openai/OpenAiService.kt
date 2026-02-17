@@ -1,4 +1,4 @@
-package com.app.jobsearch.openai
+package com.app.jobsearch.modules.openai
 
 import com.app.jobsearch.core.config.OpenAiProperties
 import com.fasterxml.jackson.databind.ObjectMapper

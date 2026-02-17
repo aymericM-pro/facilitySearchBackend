@@ -19,3 +19,6 @@ spring:
 gcp:
   bucket: test-bucket
   credentials-path: src/test/resources/fake.json
+
+openai:
+  api-key: fake-test-key

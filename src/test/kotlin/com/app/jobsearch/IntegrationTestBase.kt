@@ -1,6 +1,6 @@
 package com.app.jobsearch
 
-import com.app.jobsearch.openai.OpenAiService
+import com.app.jobsearch.modules.openai.OpenAiService
 import com.google.cloud.storage.Storage
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,7 +13,4 @@ abstract class IntegrationTestBase {
 
     @MockitoBean
     lateinit var storage: Storage
-
-    @MockitoBean
-    lateinit var openAiService: OpenAiService
 }

@@ -1,7 +1,7 @@
 package com.app.jobsearch.modules.curriculum
 
 import com.app.jobsearch.core.config.GcpProperties
-import com.app.jobsearch.joboffer.FileStorage
+import com.app.jobsearch.modules.joboffer.FileStorage
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
 import org.springframework.stereotype.Service

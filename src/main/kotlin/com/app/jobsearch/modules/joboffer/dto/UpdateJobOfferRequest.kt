@@ -1,14 +1,15 @@
-package com.app.jobsearch.joboffer.dto
+package com.app.jobsearch.modules.joboffer.dto
 
-import com.app.jobsearch.joboffer.ContractType
+import com.app.jobsearch.modules.joboffer.ContractType
 import java.math.BigDecimal
+import java.util.UUID
 
 data class UpdateJobOfferRequest(
     val title: String? = null,
-    val company: String? = null,
+    val companyId: UUID? = null,
     val location: String? = null,
     val description: String? = null,
-    val tags: List<String>? = null,
+    val skills: List<String>? = null,
     val remote: Boolean? = null,
     val salaryMin: BigDecimal? = null,
     val salaryMax: BigDecimal? = null,

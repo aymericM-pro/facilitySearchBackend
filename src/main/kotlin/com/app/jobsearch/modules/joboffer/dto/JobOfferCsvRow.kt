@@ -1,6 +1,6 @@
-package com.app.jobsearch.joboffer.dto
+package com.app.jobsearch.modules.joboffer.dto
 
-import com.app.jobsearch.joboffer.ContractType
+import com.app.jobsearch.modules.joboffer.ContractType
 import com.opencsv.bean.CsvBindByName
 import java.math.BigDecimal
 
@@ -10,7 +10,7 @@ data class JobOfferCsvRow(
     var title: String? = null,
 
     @CsvBindByName(column = "company")
-    var company: String? = null,
+    var companyName: String? = null,
 
     @CsvBindByName(column = "location")
     var location: String? = null,
@@ -18,8 +18,8 @@ data class JobOfferCsvRow(
     @CsvBindByName(column = "description")
     var description: String? = null,
 
-    @CsvBindByName(column = "tags")
-    var tags: String? = null,   // ← String ici
+    @CsvBindByName(column = "skills")
+    var skills: String? = null,
 
     @CsvBindByName(column = "remote")
     var remote: Boolean? = null,
@@ -32,18 +32,4 @@ data class JobOfferCsvRow(
 
     @CsvBindByName(column = "contractType")
     var contractType: ContractType? = null
-) {
-
-    fun toRequest(): CreateJobOfferRequest =
-        CreateJobOfferRequest(
-            title = title ?: error("Missing title"),
-            company = company ?: error("Missing company"),
-            location = location,
-            description = description,
-            tags = tags?.split("|") ?: emptyList(),
-            remote = remote ?: false,
-            salaryMin = salaryMin,
-            salaryMax = salaryMax,
-            contractType = contractType
-        )
-}
+)

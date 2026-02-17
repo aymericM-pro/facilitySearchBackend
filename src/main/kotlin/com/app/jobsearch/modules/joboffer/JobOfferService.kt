@@ -1,9 +1,9 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
 import com.app.jobsearch.core.error.BusinessException
-import com.app.jobsearch.joboffer.dto.CreateJobOfferRequest
-import com.app.jobsearch.joboffer.dto.JobOfferResponse
-import com.app.jobsearch.joboffer.dto.UpdateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
+import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.transaction.Transactional

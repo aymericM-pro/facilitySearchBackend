@@ -1,4 +1,4 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor

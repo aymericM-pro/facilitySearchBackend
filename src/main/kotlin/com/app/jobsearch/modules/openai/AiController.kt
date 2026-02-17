@@ -1,4 +1,4 @@
-package com.app.jobsearch.openai
+package com.app.jobsearch.modules.openai
 
 import com.app.jobsearch.modules.curriculum.request.AiRequest
 import org.springframework.web.bind.annotation.*

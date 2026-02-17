@@ -2,6 +2,7 @@ package com.app.jobsearch.auth
 
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -12,10 +13,10 @@ class AuthController(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService
-) {
+): AuthApi {
 
     @PostMapping("/register")
-    fun register(@Valid @RequestBody request: AuthRequest): Map<String, String> {
+    override fun register(@Valid @RequestBody request: AuthRequest): ResponseEntity<Map<String, String>> {
 
         if (userRepository.findByEmail(request.email) != null) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Email already exists")
@@ -30,14 +31,15 @@ class AuthController(
                 pseudo = request.pseudo
             )
         )
+        val token = jwtService.generateToken(user)
+        return ResponseEntity.ok(mapOf("token" to token))
 
-        return mapOf("token" to jwtService.generateToken(user))
     }
 
     @PostMapping("/login")
-    fun login(
+    override fun login(
         @Valid @RequestBody request: AuthRequest
-    ): Map<String, String> {
+    ): ResponseEntity<Map<String, String>> {
 
         val email: String = request.email
         val password: String = request.password
@@ -49,9 +51,9 @@ class AuthController(
             throw RuntimeException("Invalid credentials")
         }
 
-        return mapOf(
-            "token" to jwtService.generateToken(user)
-        )
+        val token = jwtService.generateToken(user)
+        return ResponseEntity.ok(mapOf("token" to token))
+
     }
 }
 

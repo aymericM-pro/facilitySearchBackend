@@ -1,8 +1,8 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
-import com.app.jobsearch.joboffer.dto.CreateJobOfferRequest
-import com.app.jobsearch.joboffer.dto.JobOfferResponse
-import com.app.jobsearch.joboffer.dto.UpdateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
+import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
+import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -12,7 +12,11 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/api/job-offers")
-class JobOfferController(private val service: JobOfferService, private val csvImporter: JobOfferCsvImporter) : JobOfferApi {
+class JobOfferController(
+    private val service: JobOfferService,
+    private val csvImporter: JobOfferCsvImporter
+) :
+    JobOfferApi {
 
     @PostMapping
     override fun create(@RequestBody request: CreateJobOfferRequest): ResponseEntity<JobOfferResponse> =

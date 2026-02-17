@@ -1,4 +1,4 @@
-package com.app.jobsearch.joboffer
+package com.app.jobsearch.modules.joboffer
 
 import com.app.jobsearch.core.error.DomainError
 import org.springframework.http.HttpStatus

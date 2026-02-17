@@ -1,8 +1,8 @@
 package com.app.jobsearch.modules.curriculum
 
 import com.app.jobsearch.auth.UserRepository
-import com.app.jobsearch.joboffer.FileStorage
-import com.app.jobsearch.openai.OpenAiService
+import com.app.jobsearch.modules.joboffer.FileStorage
+import com.app.jobsearch.modules.openai.OpenAiService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
@@ -18,11 +18,10 @@ class CurriculumController(
     private val curriculumRepository: CurriculumRepository,
     private val userRepository: UserRepository,
     private val openAiService: OpenAiService
-) {
-
+): CurriculumApi {
 
     @PostMapping("/trigger")
-    fun trigger(@RequestBody request: TriggerN8nRequest, authentication: Authentication): ResponseEntity<Map<String, String>> {
+    override fun trigger(@RequestBody request: TriggerN8nRequest, authentication: Authentication): ResponseEntity<Map<String, String>> {
 
         val email = authentication.name
         val user = userRepository.findByEmail(email)
@@ -57,11 +56,7 @@ class CurriculumController(
     }
 
     @GetMapping("/download/{id}")
-    fun download(
-        @PathVariable id: UUID,
-        authentication: Authentication
-    ): ResponseEntity<Map<String, String>> {
-
+    override fun download(@PathVariable id: UUID, authentication: Authentication): ResponseEntity<Map<String, String>> {
         val email = authentication.name
 
         val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
@@ -81,8 +76,7 @@ class CurriculumController(
     }
 
     @GetMapping("/my")
-    fun myCurriculums(authentication: Authentication): List<CurriculumEntity> {
-
+    override fun myCurriculums(authentication: Authentication): List<CurriculumEntity> {
         val email = authentication.name
 
         val user = userRepository.findByEmail(email)
@@ -92,15 +86,11 @@ class CurriculumController(
     }
 
     @GetMapping("/by-offer")
-    fun getMyByOffer(authentication: Authentication): List<Map<String, String>> {
-
+    override fun getMyByOffer(authentication: Authentication): List<Map<String, String>> {
         val email = authentication.name
-        val user = userRepository.findByEmail(email)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
 
-        val curriculums =
-            curriculumRepository.findAllByUserName(user.pseudo)
-
+        val curriculums = curriculumRepository.findAllByUserName(user.pseudo)
         return curriculums.map {
             mapOf(
                 "id" to it.id.toString(),
