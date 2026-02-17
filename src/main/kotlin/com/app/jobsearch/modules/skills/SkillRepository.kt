@@ -5,4 +5,5 @@ import java.util.UUID
 
 interface SkillRepository : JpaRepository<SkillEntity, UUID> {
     fun findByName(name: String): SkillEntity?
+    fun existsByName(name: String): Boolean
 }

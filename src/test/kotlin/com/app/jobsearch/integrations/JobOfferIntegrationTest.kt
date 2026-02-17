@@ -1,4 +1,4 @@
-package com.app.jobsearch
+package com.app.jobsearch.integrations
 
 import com.app.jobsearch.core.error.BusinessException
 import com.app.jobsearch.modules.companies.CompanyEntity

@@ -18,7 +18,7 @@ interface AuthApi {
             ApiResponse(responseCode = "400", description = "Invalid request")
         ]
     )
-    fun register(request: AuthRequest): ResponseEntity<Map<String, String>>
+    fun register(request: AuthRequest): ResponseEntity<AuthResponse>
 
 
     @Operation(
@@ -30,5 +30,5 @@ interface AuthApi {
             ApiResponse(responseCode = "400", description = "Invalid request")
         ]
     )
-    fun login(request: AuthRequest): ResponseEntity<Map<String, String>>
+    fun login(request: AuthRequest): ResponseEntity<AuthResponse>
 }
