@@ -12,14 +12,15 @@ class AuthController(
 ) : AuthApi {
 
     @PostMapping("/register")
-    override fun register(@Valid @RequestBody request: AuthRequest): ResponseEntity<AuthResponse> {
+    override fun register(@Valid @RequestBody request: RegisterRequest): ResponseEntity<AuthResponse> {
         val response = authService.register(request)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @PostMapping("/login")
-    override fun login(@Valid @RequestBody request: AuthRequest): ResponseEntity<AuthResponse> {
+    override fun login(@Valid @RequestBody request: LoginRequest): ResponseEntity<AuthResponse> {
         val response = authService.login(request)
         return ResponseEntity.ok(response)
     }
+
 }

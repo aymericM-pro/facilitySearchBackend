@@ -11,24 +11,22 @@ interface AuthApi {
 
     @Operation(
         summary = "Register a new user",
-        security = [],
         responses = [
             ApiResponse(responseCode = "200", description = "User registered successfully"),
             ApiResponse(responseCode = "409", description = "Email already exists"),
             ApiResponse(responseCode = "400", description = "Invalid request")
         ]
     )
-    fun register(request: AuthRequest): ResponseEntity<AuthResponse>
+    fun register(request: RegisterRequest): ResponseEntity<AuthResponse>
 
 
     @Operation(
         summary = "Login user",
-        security = [],
         responses = [
             ApiResponse(responseCode = "200", description = "Authentication successful"),
             ApiResponse(responseCode = "401", description = "Invalid credentials"),
             ApiResponse(responseCode = "400", description = "Invalid request")
         ]
     )
-    fun login(request: AuthRequest): ResponseEntity<AuthResponse>
+    fun login(request: LoginRequest): ResponseEntity<AuthResponse>
 }

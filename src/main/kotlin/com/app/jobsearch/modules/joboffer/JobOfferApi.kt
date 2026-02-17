@@ -1,5 +1,6 @@
 package com.app.jobsearch.modules.joboffer
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
 import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
@@ -48,7 +49,7 @@ interface JobOfferApi {
         contractType: ContractType?,
         enterprises: List<String>?,
         skills: List<String>?
-    ): ResponseEntity<Page<JobOfferResponse>>
+    ): ResponseEntity<PageResponse<JobOfferResponse>>
 
 
     @Operation(

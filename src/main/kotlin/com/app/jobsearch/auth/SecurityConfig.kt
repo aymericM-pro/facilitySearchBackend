@@ -1,6 +1,5 @@
-package com.app.jobsearch.core.config
+package com.app.jobsearch.auth
 
-import com.app.jobsearch.auth.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -23,8 +22,8 @@ class SecurityConfig {
             .csrf { it.disable() }
             .cors { }
             .authorizeHttpRequests {
-                it.requestMatchers(HttpMethod.POST, "/api/curriculum/trigger").authenticated()
-                it.anyRequest().permitAll()
+                it.requestMatchers("/api/auth/**").permitAll()
+                it.anyRequest().authenticated()
             }
             .addFilterBefore(
                 jwtAuthenticationFilter,

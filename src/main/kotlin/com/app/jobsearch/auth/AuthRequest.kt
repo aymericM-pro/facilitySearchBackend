@@ -9,7 +9,6 @@ data class AuthRequest(
     @field:NotBlank
     val email: String,
 
-    @field:NotBlank
     val pseudo: String,
 
     @field:NotBlank

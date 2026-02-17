@@ -1,5 +1,6 @@
 package com.app.jobsearch.modules.joboffer
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
 import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
@@ -21,7 +22,6 @@ class JobOfferController(
     @PostMapping
     override fun create(@RequestBody request: CreateJobOfferRequest): ResponseEntity<JobOfferResponse> =
         ResponseEntity.ok(service.create(request))
-
     @GetMapping
     override fun getAll(
         pageable: Pageable,
@@ -30,7 +30,8 @@ class JobOfferController(
         @RequestParam(required = false) contractType: ContractType?,
         @RequestParam(required = false) enterprises: List<String>?,
         @RequestParam(required = false) skills: List<String>?
-    ): ResponseEntity<Page<JobOfferResponse>> {
+    ): ResponseEntity<PageResponse<JobOfferResponse>> {
+
         val criteria = JobOfferCriteria(
             remote = remote,
             location = location,
@@ -39,9 +40,10 @@ class JobOfferController(
             skills = skills
         )
 
-        return ResponseEntity.ok(service.findAll(pageable, criteria))
-    }
+        val result = service.findAll(criteria, pageable)
 
+        return ResponseEntity.ok(result)
+    }
 
     @GetMapping("/{id}")
     override fun getById(@PathVariable id: UUID): ResponseEntity<JobOfferResponse> =

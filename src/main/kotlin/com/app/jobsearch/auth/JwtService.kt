@@ -5,19 +5,24 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.crypto.SecretKey
 
 @Service
+
 class JwtService(
-    private val jwtProperties: JwtProperties
+    private val jwtProperties: JwtProperties,
 ) {
+    private val log = LoggerFactory.getLogger(JwtService::class.java)
 
     private fun getSigningKey(): SecretKey {
         val keyBytes = Decoders.BASE64.decode(jwtProperties.secret)
+        log.debug("Decoded JWT key length = {}", keyBytes.size)
         return Keys.hmacShaKeyFor(keyBytes)
     }
+
 
     fun generateAccessToken(user: UserEntity): String =
         buildToken(user, jwtProperties.expiration)
@@ -26,6 +31,8 @@ class JwtService(
         buildToken(user, jwtProperties.refreshExpiration)
 
     private fun buildToken(user: UserEntity, ttl: Long): String {
+        log.debug("Building token for {} with ttl={}", user.email, ttl)
+
         return Jwts.builder()
             .subject(user.email)
             .issuedAt(Date())
@@ -33,6 +40,7 @@ class JwtService(
             .signWith(getSigningKey())
             .compact()
     }
+
 
     fun extractEmail(token: String): String =
         extractClaim(token) { it.subject }
@@ -49,4 +57,9 @@ class JwtService(
 
         return resolver(claims)
     }
+
+    init {
+        println("JWT SECRET = '${jwtProperties.secret}'")
+    }
+
 }

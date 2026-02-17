@@ -1,5 +1,6 @@
 package com.app.jobsearch.modules.joboffer
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.core.error.BusinessException
 import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
@@ -29,11 +30,22 @@ class JobOfferService(
         return mapper.toResponse(saved)
     }
 
-    fun findAll(pageable: Pageable, criteria: JobOfferCriteria): Page<JobOfferResponse> {
+    fun findAll(
+        criteria: JobOfferCriteria,
+        pageable: Pageable
+    ): PageResponse<JobOfferResponse> {
+
         val specification = JobOfferSpecification.withCriteria(criteria)
-        return repository
-            .findAll(specification, pageable)
-            .map { mapper.toResponse(it) }
+
+        val page = repository.findAll(specification, pageable)
+
+        return PageResponse(
+            content = page.content.map { mapper.toResponse(it) },
+            page = page.number,
+            size = page.size,
+            totalElements = page.totalElements,
+            totalPages = page.totalPages
+        )
     }
 
     fun findById(id: UUID): JobOfferResponse =

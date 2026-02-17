@@ -80,12 +80,14 @@ class JobOfferIntegrationTest(
         repeat(3) { service.create(fullRequest()) }
 
         val page = service.findAll(
-            PageRequest.of(0, 2),
-            JobOfferCriteria()
+            JobOfferCriteria(),
+            PageRequest.of(0, 2)
         )
 
         assertEquals(2, page.content.size)
         assertEquals(3, page.totalElements)
+        assertEquals(2, page.totalPages)
+        assertEquals(0, page.page)
     }
 
     @Test
