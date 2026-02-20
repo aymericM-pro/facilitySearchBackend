@@ -2,6 +2,8 @@ package com.app.jobsearch.integrations
 
 import com.app.jobsearch.core.error.BusinessException
 import com.app.jobsearch.modules.companies.CompanyService
+import com.app.jobsearch.modules.companies.CompanyType
+import com.app.jobsearch.modules.companies.Industry
 import com.app.jobsearch.modules.companies.request.CompanyResponse
 import com.app.jobsearch.modules.companies.request.CreateCompanyRequest
 import com.app.jobsearch.modules.companies.request.UpdateCompanyRequest
@@ -32,6 +34,8 @@ class CompanyIntegrationTest(
 
         assertEquals(created.id, found.id)
         assertEquals(created.name, found.name)
+        assertEquals(created.industry, found.industry)
+        assertEquals(created.companyType, found.companyType)
     }
 
     @Test
@@ -40,37 +44,28 @@ class CompanyIntegrationTest(
 
         val updateRequest = UpdateCompanyRequest(
             name = "Updated Company",
-            city = "Marseille"
+            city = "Marseille",
+            companyType = CompanyType.STARTUP,
+            industry = Industry.FINTECH
         )
 
         val updated = service.update(created.id, updateRequest)
 
         assertEquals("Updated Company", updated.name)
         assertEquals("Marseille", updated.city)
+        assertEquals(CompanyType.STARTUP, updated.companyType)
+        assertEquals(Industry.FINTECH, updated.industry)
     }
 
     @Test
     fun testDelete() {
         val created = service.create(fullRequest())
-
         service.delete(created.id)
 
         assertThrows(BusinessException::class.java) {
             service.findById(created.id)
         }
     }
-
-/*
-   @Test
-    fun testPagination() {
-        repeat(3) { service.create(fullRequest()) }
-
-        val page = service.findAll(PageRequest.of(0, 2))
-
-        assertEquals(2, page.content.size)
-        assertEquals(3, page.totalElements)
-    }
-*/
 
     @Test
     fun testNotFound() {
@@ -91,20 +86,31 @@ class CompanyIntegrationTest(
     @Test
     fun testBlankName() {
         assertThrows(BusinessException::class.java) {
-            service.create(CreateCompanyRequest("", "Paris"))
+            service.create(
+                CreateCompanyRequest(
+                    name = "",
+                    city = "Paris",
+                    companyType = CompanyType.STARTUP,
+                    industry = Industry.FINTECH
+                )
+            )
         }
     }
 
     private fun fullRequest() =
         CreateCompanyRequest(
             name = "Agate IT",
-            city = "Paris"
+            city = "Paris",
+            companyType = CompanyType.STARTUP,
+            industry = Industry.SAAS
         )
 
     private fun assertCompany(actual: CompanyResponse, expected: CreateCompanyRequest) {
         assertNotNull(actual.id)
         assertEquals(expected.name, actual.name)
         assertEquals(expected.city, actual.city)
+        assertEquals(expected.companyType, actual.companyType)
+        assertEquals(expected.industry, actual.industry)
         assertNotNull(actual.createdAt)
     }
 }

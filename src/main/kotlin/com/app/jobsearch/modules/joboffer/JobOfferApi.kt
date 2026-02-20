@@ -1,6 +1,7 @@
 package com.app.jobsearch.modules.joboffer
 
 import com.app.jobsearch.core.common.PageResponse
+import com.app.jobsearch.modules.joboffer.dto.CompanyJobOfferCount
 import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
 import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
@@ -80,6 +81,15 @@ interface JobOfferApi {
         ]
     )
     fun delete(id: UUID): ResponseEntity<Void>
+
+
+    @Operation(
+        summary = "Count job offers grouped by company",
+        responses = [
+            ApiResponse(responseCode = "200", description = "Job offer counts per company, sorted by count desc")
+        ]
+    )
+    fun countByCompany(): ResponseEntity<List<CompanyJobOfferCount>>
 
 
     @Operation(

@@ -4,6 +4,7 @@ import com.app.jobsearch.modules.companies.CompanyEntity
 import com.app.jobsearch.modules.skills.SkillEntity
 import org.springframework.data.jpa.domain.Specification
 import jakarta.persistence.criteria.Predicate
+import java.util.UUID
 
 object JobOfferSpecification {
 

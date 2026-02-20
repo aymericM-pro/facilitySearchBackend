@@ -1,7 +1,7 @@
 package com.app.jobsearch.modules.skills
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.modules.skills.request.*
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -16,7 +16,7 @@ class SkillController(private val service: SkillService) : SkillApi {
         ResponseEntity.ok(service.create(request))
 
     @GetMapping
-    override fun getAll(pageable: Pageable): ResponseEntity<Page<SkillResponse>> =
+    override fun getAll(pageable: Pageable): ResponseEntity<PageResponse<SkillResponse>> =
         ResponseEntity.ok(service.findAll(pageable))
 
     @GetMapping("/{id}")

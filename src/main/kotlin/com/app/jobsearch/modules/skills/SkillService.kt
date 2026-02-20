@@ -1,10 +1,10 @@
 package com.app.jobsearch.modules.skills
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.core.error.BusinessException
 import com.app.jobsearch.modules.skills.request.CreateSkillRequest
 import com.app.jobsearch.modules.skills.request.SkillResponse
 import com.app.jobsearch.modules.skills.request.UpdateSkillRequest
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -33,9 +33,16 @@ class SkillService(
         return mapper.toResponse(saved)
     }
 
-    fun findAll(pageable: Pageable): Page<SkillResponse> =
-        repository.findAll(pageable)
-            .map { mapper.toResponse(it) }
+    fun findAll(pageable: Pageable): PageResponse<SkillResponse> {
+        val page = repository.findAll(pageable)
+        return PageResponse(
+            content = page.content.map { mapper.toResponse(it) },
+            page = page.number,
+            size = page.size,
+            totalElements = page.totalElements,
+            totalPages = page.totalPages
+        )
+    }
 
     fun findById(id: UUID): SkillResponse =
         repository.findById(id)

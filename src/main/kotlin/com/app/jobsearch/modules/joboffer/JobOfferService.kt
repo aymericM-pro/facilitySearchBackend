@@ -2,13 +2,13 @@ package com.app.jobsearch.modules.joboffer
 
 import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.core.error.BusinessException
+import com.app.jobsearch.modules.joboffer.dto.CompanyJobOfferCount
 import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
 import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.transaction.Transactional
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -64,6 +64,19 @@ class JobOfferService(
         val saved = repository.save(existing)
         return mapper.toResponse(saved)
     }
+
+    fun findAllByCompany(companyId: UUID, pageable: Pageable): PageResponse<JobOfferResponse> {
+        val page = repository.findAllByCompanyId(companyId, pageable)
+        return PageResponse(
+            content = page.content.map { mapper.toResponse(it) },
+            page = page.number,
+            size = page.size,
+            totalElements = page.totalElements,
+            totalPages = page.totalPages
+        )
+    }
+
+    fun countByCompany(): List<CompanyJobOfferCount> = repository.countByCompany()
 
     fun delete(id: UUID) {
         if (!repository.existsById(id)) {

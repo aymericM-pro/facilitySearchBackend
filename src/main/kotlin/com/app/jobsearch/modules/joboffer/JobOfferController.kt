@@ -1,10 +1,10 @@
 package com.app.jobsearch.modules.joboffer
 
 import com.app.jobsearch.core.common.PageResponse
+import com.app.jobsearch.modules.joboffer.dto.CompanyJobOfferCount
 import com.app.jobsearch.modules.joboffer.dto.CreateJobOfferRequest
 import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
 import com.app.jobsearch.modules.joboffer.dto.UpdateJobOfferRequest
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -61,6 +61,10 @@ class JobOfferController(
         return ResponseEntity.noContent().build()
     }
 
+
+    @GetMapping("/stats/by-company")
+    override fun countByCompany(): ResponseEntity<List<CompanyJobOfferCount>> =
+        ResponseEntity.ok(service.countByCompany())
 
     @PostMapping("/import")
     override fun importCsv(@RequestParam("file") file: MultipartFile): ResponseEntity<Map<String, Any>> {

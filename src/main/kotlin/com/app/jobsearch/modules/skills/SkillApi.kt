@@ -1,5 +1,6 @@
 package com.app.jobsearch.modules.skills
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.modules.skills.request.CreateSkillRequest
 import com.app.jobsearch.modules.skills.request.SkillResponse
 import com.app.jobsearch.modules.skills.request.UpdateSkillRequest
@@ -7,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import java.util.UUID
@@ -35,7 +35,7 @@ interface SkillApi {
     fun getAll(
         @Parameter(hidden = true)
         pageable: Pageable
-    ): ResponseEntity<Page<SkillResponse>>
+    ): ResponseEntity<PageResponse<SkillResponse>>
 
 
     @Operation(

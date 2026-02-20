@@ -8,6 +8,42 @@ CREATE TYPE contract_type AS ENUM (
     'APPRENTICESHIP'
 );
 
+CREATE TYPE company_type AS ENUM (
+    'STARTUP',
+    'SCALE_UP',
+    'ENTERPRISE'
+);
+
+CREATE TYPE industry AS ENUM (
+    'FINTECH',
+    'INSURTECH',
+    'HEALTHTECH',
+    'MEDTECH',
+    'BIOTECH',
+    'EDTECH',
+    'PROPTECH',
+    'LEGALTECH',
+    'HRTECH',
+    'MARTECH',
+    'ADTECH',
+    'ECOMMERCE',
+    'SAAS',
+    'ARTIFICIAL_INTELLIGENCE',
+    'CYBERSECURITY',
+    'BLOCKCHAIN_WEB3',
+    'CLIMATETECH',
+    'GREEN_ENERGY',
+    'GAMING',
+    'CLOUD_COMPUTING'
+);
+
+CREATE TABLE addresses (
+                           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                           city VARCHAR(255) NOT NULL,
+                           country VARCHAR(255),
+                           postal_code VARCHAR(20)
+);
+
 CREATE TABLE users (
                        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        email VARCHAR(255) UNIQUE NOT NULL,
@@ -19,8 +55,10 @@ CREATE TABLE users (
 CREATE TABLE companies (
                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                            name VARCHAR(255) NOT NULL,
-                           city VARCHAR(255),
-                           created_at TIMESTAMP DEFAULT NOW()
+                           address_id UUID REFERENCES addresses(id),
+                           created_at TIMESTAMP DEFAULT NOW(),
+                           company_type company_type,
+                           industry industry NOT NULL
 );
 
 CREATE TABLE skills (
@@ -172,358 +210,174 @@ INSERT INTO skills (id, name) VALUES
     (gen_random_uuid(), 'Hadoop'),
     (gen_random_uuid(), 'Pandas');
 
-INSERT INTO companies (id, name, city) VALUES
-    (gen_random_uuid(), 'Agate IT', 'Paris'),
-    (gen_random_uuid(), 'Doctolib', 'Paris'),
-    (gen_random_uuid(), 'Alan', 'Paris'),
-    (gen_random_uuid(), 'Qonto', 'Paris'),
-    (gen_random_uuid(), 'Mirakl', 'Paris'),
-    (gen_random_uuid(), 'Back Market', 'Paris'),
-    (gen_random_uuid(), 'OVHcloud', 'Roubaix'),
-    (gen_random_uuid(), 'Dataiku', 'Paris'),
-    (gen_random_uuid(), 'Ledger', 'Paris'),
-    (gen_random_uuid(), 'BlaBlaCar', 'Paris'),
-    (gen_random_uuid(), 'Sopra Steria', 'Paris'),
-    (gen_random_uuid(), 'Capgemini', 'Paris'),
-    (gen_random_uuid(), 'Thales', 'Toulouse'),
-    (gen_random_uuid(), 'Airbus', 'Toulouse'),
-    (gen_random_uuid(), 'Orange', 'Paris'),
-    (gen_random_uuid(), 'BNP Paribas', 'Paris'),
-    (gen_random_uuid(), 'Crédit Agricole CIB', 'Paris'),
-    (gen_random_uuid(), 'Natixis', 'Paris'),
-    (gen_random_uuid(), 'Amadeus', 'Nice'),
-    (gen_random_uuid(), 'SAP', 'Berlin'),
+INSERT INTO addresses (id, city, country) VALUES
+    (gen_random_uuid(), 'Paris', 'France'),
+    (gen_random_uuid(), 'Roubaix', 'France'),
+    (gen_random_uuid(), 'Toulouse', 'France'),
+    (gen_random_uuid(), 'Nice', 'France'),
+    (gen_random_uuid(), 'Berlin', 'Germany'),
+    (gen_random_uuid(), 'Montpellier', 'France'),
+    (gen_random_uuid(), 'Bezons', 'France'),
+    (gen_random_uuid(), 'Boulogne-Billancourt', 'France'),
+    (gen_random_uuid(), 'Levallois-Perret', 'France'),
+    (gen_random_uuid(), 'Vélizy', 'France'),
+    (gen_random_uuid(), 'Montreuil', 'France'),
+    (gen_random_uuid(), 'Saint-Denis', 'France'),
+    (gen_random_uuid(), 'Courbevoie', 'France'),
+    (gen_random_uuid(), 'Clichy', 'France'),
+    (gen_random_uuid(), 'Issy-les-Moulineaux', 'France'),
+    (gen_random_uuid(), 'Stockholm', 'Sweden'),
+    (gen_random_uuid(), 'London', 'United Kingdom'),
+    (gen_random_uuid(), 'Nantes', 'France'),
+    (gen_random_uuid(), 'Labège', 'France'),
+    (gen_random_uuid(), 'Grenoble', 'France'),
+    (gen_random_uuid(), 'Lyon', 'France');
+
+INSERT INTO companies (id, name, address_id, company_type, industry)
+SELECT gen_random_uuid(), v.name, a.id, v.ctype::company_type, v.ind::industry
+FROM (VALUES
+    -- Core
+    ('Agate IT',              'Paris',                  'STARTUP',    'SAAS'),
+    ('Doctolib',              'Paris',                  'SCALE_UP',   'HEALTHTECH'),
+    ('Alan',                  'Paris',                  'SCALE_UP',   'INSURTECH'),
+    ('Qonto',                 'Paris',                  'SCALE_UP',   'FINTECH'),
+    ('Mirakl',                'Paris',                  'SCALE_UP',   'ECOMMERCE'),
+    ('Back Market',           'Paris',                  'SCALE_UP',   'ECOMMERCE'),
+    ('OVHcloud',              'Roubaix',                'ENTERPRISE',  'CLOUD_COMPUTING'),
+    ('Dataiku',               'Paris',                  'SCALE_UP',   'ARTIFICIAL_INTELLIGENCE'),
+    ('Ledger',                'Paris',                  'SCALE_UP',   'BLOCKCHAIN_WEB3'),
+    ('BlaBlaCar',             'Paris',                  'SCALE_UP',   'SAAS'),
+    ('Sopra Steria',          'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('Capgemini',             'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('Thales',                'Toulouse',               'ENTERPRISE',  'CYBERSECURITY'),
+    ('Airbus',                'Toulouse',               'ENTERPRISE',  'SAAS'),
+    ('Orange',                'Paris',                  'ENTERPRISE',  'CYBERSECURITY'),
+    ('BNP Paribas',           'Paris',                  'ENTERPRISE',  'FINTECH'),
+    ('Crédit Agricole CIB',   'Paris',                  'ENTERPRISE',  'FINTECH'),
+    ('Natixis',               'Paris',                  'ENTERPRISE',  'FINTECH'),
+    ('Amadeus',               'Nice',                   'ENTERPRISE',  'SAAS'),
+    ('SAP',                   'Berlin',                 'ENTERPRISE',  'SAAS'),
     -- French Tech & Startups
-    (gen_random_uuid(), 'Swile', 'Montpellier'),
-    (gen_random_uuid(), 'Payfit', 'Paris'),
-    (gen_random_uuid(), 'Spendesk', 'Paris'),
-    (gen_random_uuid(), 'Algolia', 'Paris'),
-    (gen_random_uuid(), 'ContentSquare', 'Paris'),
-    (gen_random_uuid(), 'ManoMano', 'Paris'),
-    (gen_random_uuid(), 'Vestiaire Collective', 'Paris'),
-    (gen_random_uuid(), 'Deezer', 'Paris'),
-    (gen_random_uuid(), 'Criteo', 'Paris'),
-    (gen_random_uuid(), 'Dailymotion', 'Paris'),
-    (gen_random_uuid(), 'Meero', 'Paris'),
-    (gen_random_uuid(), 'Scaleway', 'Paris'),
-    (gen_random_uuid(), 'Numberly', 'Paris'),
-    (gen_random_uuid(), 'AB Tasty', 'Paris'),
-    (gen_random_uuid(), 'Platform.sh', 'Paris'),
+    ('Swile',                 'Montpellier',            'SCALE_UP',   'HRTECH'),
+    ('Payfit',                'Paris',                  'SCALE_UP',   'HRTECH'),
+    ('Spendesk',              'Paris',                  'SCALE_UP',   'FINTECH'),
+    ('Algolia',               'Paris',                  'SCALE_UP',   'SAAS'),
+    ('ContentSquare',         'Paris',                  'SCALE_UP',   'MARTECH'),
+    ('ManoMano',              'Paris',                  'SCALE_UP',   'ECOMMERCE'),
+    ('Vestiaire Collective',  'Paris',                  'SCALE_UP',   'ECOMMERCE'),
+    ('Deezer',                'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('Criteo',                'Paris',                  'ENTERPRISE',  'ADTECH'),
+    ('Dailymotion',           'Paris',                  'ENTERPRISE',  'ADTECH'),
+    ('Meero',                 'Paris',                  'STARTUP',    'ARTIFICIAL_INTELLIGENCE'),
+    ('Scaleway',              'Paris',                  'SCALE_UP',   'CLOUD_COMPUTING'),
+    ('Numberly',              'Paris',                  'SCALE_UP',   'MARTECH'),
+    ('AB Tasty',              'Paris',                  'SCALE_UP',   'MARTECH'),
+    ('Platform.sh',           'Paris',                  'SCALE_UP',   'CLOUD_COMPUTING'),
     -- ESN & Consulting
-    (gen_random_uuid(), 'Atos', 'Bezons'),
-    (gen_random_uuid(), 'Accenture', 'Paris'),
-    (gen_random_uuid(), 'CGI', 'Paris'),
-    (gen_random_uuid(), 'Altran', 'Paris'),
-    (gen_random_uuid(), 'Alten', 'Boulogne-Billancourt'),
-    (gen_random_uuid(), 'Devoteam', 'Levallois-Perret'),
-    (gen_random_uuid(), 'Octo Technology', 'Paris'),
-    (gen_random_uuid(), 'Xebia', 'Paris'),
-    (gen_random_uuid(), 'Ippon Technologies', 'Paris'),
-    (gen_random_uuid(), 'Zenika', 'Paris'),
+    ('Atos',                  'Bezons',                 'ENTERPRISE',  'SAAS'),
+    ('Accenture',             'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('CGI',                   'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('Altran',                'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('Alten',                 'Boulogne-Billancourt',   'ENTERPRISE',  'SAAS'),
+    ('Devoteam',              'Levallois-Perret',       'ENTERPRISE',  'CLOUD_COMPUTING'),
+    ('Octo Technology',       'Paris',                  'SCALE_UP',   'SAAS'),
+    ('Xebia',                 'Paris',                  'SCALE_UP',   'SAAS'),
+    ('Ippon Technologies',    'Paris',                  'SCALE_UP',   'SAAS'),
+    ('Zenika',                'Paris',                  'SCALE_UP',   'SAAS'),
     -- Grands groupes & Industrie
-    (gen_random_uuid(), 'Dassault Systèmes', 'Vélizy'),
-    (gen_random_uuid(), 'Ubisoft', 'Montreuil'),
-    (gen_random_uuid(), 'Renault', 'Boulogne-Billancourt'),
-    (gen_random_uuid(), 'SNCF', 'Saint-Denis'),
-    (gen_random_uuid(), 'EDF', 'Paris'),
-    (gen_random_uuid(), 'Société Générale', 'Paris'),
-    (gen_random_uuid(), 'AXA', 'Paris'),
-    (gen_random_uuid(), 'Total Energies', 'Courbevoie'),
-    (gen_random_uuid(), 'L''Oréal', 'Clichy'),
-    (gen_random_uuid(), 'Safran', 'Paris'),
+    ('Dassault Systèmes',     'Vélizy',                 'ENTERPRISE',  'SAAS'),
+    ('Ubisoft',               'Montreuil',              'ENTERPRISE',  'GAMING'),
+    ('Renault',               'Boulogne-Billancourt',   'ENTERPRISE',  'SAAS'),
+    ('SNCF',                  'Saint-Denis',            'ENTERPRISE',  'SAAS'),
+    ('EDF',                   'Paris',                  'ENTERPRISE',  'GREEN_ENERGY'),
+    ('Société Générale',      'Paris',                  'ENTERPRISE',  'FINTECH'),
+    ('AXA',                   'Paris',                  'ENTERPRISE',  'INSURTECH'),
+    ('Total Energies',        'Courbevoie',             'ENTERPRISE',  'GREEN_ENERGY'),
+    ('L''Oréal',              'Clichy',                 'ENTERPRISE',  'ECOMMERCE'),
+    ('Safran',                'Paris',                  'ENTERPRISE',  'SAAS'),
     -- International
-    (gen_random_uuid(), 'Google', 'Paris'),
-    (gen_random_uuid(), 'Microsoft', 'Issy-les-Moulineaux'),
-    (gen_random_uuid(), 'Amazon', 'Clichy'),
-    (gen_random_uuid(), 'Meta', 'Paris'),
-    (gen_random_uuid(), 'Apple', 'Paris'),
-    (gen_random_uuid(), 'Spotify', 'Stockholm'),
-    (gen_random_uuid(), 'Revolut', 'London'),
-    (gen_random_uuid(), 'Klarna', 'Stockholm'),
-    (gen_random_uuid(), 'N26', 'Berlin'),
-    (gen_random_uuid(), 'Zalando', 'Berlin'),
+    ('Google',                'Paris',                  'ENTERPRISE',  'CLOUD_COMPUTING'),
+    ('Microsoft',             'Issy-les-Moulineaux',    'ENTERPRISE',  'CLOUD_COMPUTING'),
+    ('Amazon',                'Clichy',                 'ENTERPRISE',  'CLOUD_COMPUTING'),
+    ('Meta',                  'Paris',                  'ENTERPRISE',  'ARTIFICIAL_INTELLIGENCE'),
+    ('Apple',                 'Paris',                  'ENTERPRISE',  'SAAS'),
+    ('Spotify',               'Stockholm',              'ENTERPRISE',  'SAAS'),
+    ('Revolut',               'London',                 'SCALE_UP',   'FINTECH'),
+    ('Klarna',                'Stockholm',              'SCALE_UP',   'FINTECH'),
+    ('N26',                   'Berlin',                 'SCALE_UP',   'FINTECH'),
+    ('Zalando',               'Berlin',                 'ENTERPRISE',  'ECOMMERCE'),
     -- Régions françaises
-    (gen_random_uuid(), 'iAdvize', 'Nantes'),
-    (gen_random_uuid(), 'Berger-Levrault', 'Labège'),
-    (gen_random_uuid(), 'Hardis Group', 'Grenoble'),
-    (gen_random_uuid(), 'Braincube', 'Lyon');
-/* cloud */
+    ('iAdvize',               'Nantes',                 'SCALE_UP',   'ARTIFICIAL_INTELLIGENCE'),
+    ('Berger-Levrault',       'Labège',                 'ENTERPRISE',  'SAAS'),
+    ('Hardis Group',          'Grenoble',               'ENTERPRISE',  'SAAS'),
+    ('Braincube',             'Lyon',                   'SCALE_UP',   'ARTIFICIAL_INTELLIGENCE')
+) AS v(name, city, ctype, ind)
+JOIN addresses a ON a.city = v.city;
 
 
-
-INSERT INTO job_offers
-(id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT
-    gen_random_uuid(),
-    'Senior Kotlin Backend Engineer',
-    c.id,
-    c.city,
-    'Design and implement scalable microservices with Kotlin and Spring Boot.',
-    true,
-    60000,
-    75000,
-    'CDI'
-FROM companies c WHERE c.name = 'Agate IT';
-
-INSERT INTO job_offers
-(id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT
-    gen_random_uuid(),
-    'Fullstack Developer Vue / Java',
-    c.id,
-    c.city,
-    'Build modern SaaS features with Vue.js and Spring Boot.',
-    true,
-    55000,
-    70000,
-    'CDI'
-FROM companies c WHERE c.name = 'Qonto';
-
-
-INSERT INTO job_offers
-(id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT
-    gen_random_uuid(),
-    'DevOps Engineer AWS',
-    c.id,
-    c.city,
-    'Maintain Kubernetes clusters and CI/CD pipelines on AWS.',
-    true,
-    65000,
-    85000,
-    'CDI'
-FROM companies c WHERE c.name = 'Doctolib';
-
-
-INSERT INTO job_offers
-(id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT
-    gen_random_uuid(),
-    'Frontend Engineer React',
-    c.id,
-    c.city,
-    'Develop scalable UI components with React and TypeScript.',
-    true,
-    50000,
-    65000,
-    'CDI'
-FROM companies c WHERE c.name = 'Back Market';
-
-INSERT INTO job_offers
-(id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT
-    gen_random_uuid(),
-    'Software Architect',
-    c.id,
-    c.city,
-    'Lead architecture design across distributed systems.',
-    false,
-    75000,
-    95000,
-    'CDI'
-FROM companies c WHERE c.name = 'Thales';
-
--- 50 new job offers
 
 INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Backend Developer Python', c.id, c.city, 'Develop and maintain Python microservices with Django and FastAPI.', true, 50000, 65000, 'CDI'
-FROM companies c WHERE c.name = 'Algolia';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'SRE Engineer', c.id, c.city, 'Ensure reliability and performance of production systems at scale.', true, 65000, 85000, 'CDI'
-FROM companies c WHERE c.name = 'Criteo';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Data Engineer Spark', c.id, c.city, 'Build and optimize data pipelines using Spark and Kafka.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Dataiku';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Mobile Developer Flutter', c.id, c.city, 'Create cross-platform mobile apps with Flutter and Dart.', true, 45000, 60000, 'CDI'
-FROM companies c WHERE c.name = 'Swile';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Fullstack Developer React / Node.js', c.id, c.city, 'Build end-to-end features with React and Express.js.', true, 50000, 68000, 'CDI'
-FROM companies c WHERE c.name = 'Payfit';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Cloud Architect AWS', c.id, c.city, 'Design cloud-native architectures on AWS with Terraform and Kubernetes.', true, 70000, 90000, 'CDI'
-FROM companies c WHERE c.name = 'OVHcloud';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Machine Learning Engineer', c.id, c.city, 'Develop and deploy ML models with PyTorch and TensorFlow.', true, 60000, 80000, 'CDI'
-FROM companies c WHERE c.name = 'ContentSquare';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Java Backend Developer', c.id, c.city, 'Develop robust backend services with Java and Spring Boot.', false, 45000, 60000, 'CDI'
-FROM companies c WHERE c.name = 'Sopra Steria';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'DevSecOps Engineer', c.id, c.city, 'Integrate security into CI/CD pipelines with SonarQube and GitLab CI.', true, 55000, 72000, 'CDI'
-FROM companies c WHERE c.name = 'Atos';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Angular Frontend Developer', c.id, c.city, 'Build enterprise web applications with Angular and TypeScript.', false, 42000, 58000, 'CDI'
-FROM companies c WHERE c.name = 'Capgemini';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Rust Systems Developer', c.id, c.city, 'Develop high-performance embedded systems with Rust and C++.', false, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Safran';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Scala Data Engineer', c.id, c.city, 'Build real-time data processing pipelines with Scala and Spark.', true, 60000, 80000, 'CDI'
-FROM companies c WHERE c.name = 'Spotify';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Go Backend Developer', c.id, c.city, 'Design and build high-throughput APIs in Go.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Revolut';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'React Native Mobile Developer', c.id, c.city, 'Develop the mobile banking app with React Native.', true, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'N26';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Platform Engineer Kubernetes', c.id, c.city, 'Build and maintain internal developer platforms with Kubernetes and Helm.', true, 60000, 80000, 'CDI'
-FROM companies c WHERE c.name = 'Scaleway';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'PHP Backend Developer', c.id, c.city, 'Maintain and evolve e-commerce platform with PHP and Symfony.', true, 42000, 55000, 'CDI'
-FROM companies c WHERE c.name = 'ManoMano';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'QA Automation Engineer', c.id, c.city, 'Design and implement automated test suites with Cypress and Selenium.', true, 45000, 60000, 'CDI'
-FROM companies c WHERE c.name = 'Spendesk';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'C++ Embedded Developer', c.id, c.city, 'Develop firmware and embedded software for aerospace systems.', false, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'Airbus';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Fullstack Developer .NET / Angular', c.id, c.city, 'Build internal tools with .NET backend and Angular frontend.', false, 48000, 65000, 'CDI'
-FROM companies c WHERE c.name = 'Société Générale';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Lead Developer Java', c.id, c.city, 'Lead a team of developers on Java/Spring microservices projects.', true, 65000, 85000, 'CDI'
-FROM companies c WHERE c.name = 'Octo Technology';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Consultant Cloud GCP', c.id, c.city, 'Advise clients on cloud migration strategies using GCP.', true, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'Zenika';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Kotlin Android Developer', c.id, c.city, 'Develop native Android applications with Kotlin.', true, 45000, 62000, 'CDI'
-FROM companies c WHERE c.name = 'Deezer';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Frontend Engineer Svelte', c.id, c.city, 'Build modern and reactive UIs with Svelte and TypeScript.', true, 48000, 65000, 'CDI'
-FROM companies c WHERE c.name = 'AB Tasty';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Infrastructure Engineer Terraform', c.id, c.city, 'Manage infrastructure as code with Terraform and Ansible.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Devoteam';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Senior Ruby on Rails Developer', c.id, c.city, 'Build and scale marketplace features with Ruby on Rails.', true, 55000, 72000, 'CDI'
-FROM companies c WHERE c.name = 'Vestiaire Collective';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'NestJS Backend Developer', c.id, c.city, 'Design and implement APIs with NestJS and PostgreSQL.', true, 48000, 65000, 'CDI'
-FROM companies c WHERE c.name = 'Dailymotion';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Elasticsearch Engineer', c.id, c.city, 'Optimize search infrastructure with Elasticsearch at scale.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Numberly';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Site Reliability Engineer', c.id, c.city, 'Build observability and monitoring with Prometheus and Grafana.', true, 70000, 95000, 'CDI'
-FROM companies c WHERE c.name = 'Google';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Software Engineer C#', c.id, c.city, 'Develop cloud services with C# and Azure.', true, 65000, 90000, 'CDI'
-FROM companies c WHERE c.name = 'Microsoft';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Backend Engineer Java / Kotlin', c.id, c.city, 'Build large-scale distributed systems on AWS.', true, 65000, 90000, 'CDI'
-FROM companies c WHERE c.name = 'Amazon';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'AI Research Engineer', c.id, c.city, 'Research and develop cutting-edge AI models with PyTorch.', true, 75000, 100000, 'CDI'
-FROM companies c WHERE c.name = 'Meta';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'iOS Developer Swift', c.id, c.city, 'Develop native iOS applications with Swift and SwiftUI.', false, 60000, 85000, 'CDI'
-FROM companies c WHERE c.name = 'Apple';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Fullstack Developer Next.js', c.id, c.city, 'Build e-commerce features with Next.js and GraphQL.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Zalando';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Fintech Backend Developer Go', c.id, c.city, 'Build payment processing services with Go and gRPC.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Klarna';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Chatbot Developer Python', c.id, c.city, 'Build conversational AI solutions with Python and NLP frameworks.', true, 45000, 60000, 'CDI'
-FROM companies c WHERE c.name = 'iAdvize';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'ERP Developer Java', c.id, c.city, 'Develop and customize ERP solutions with Java and Spring.', false, 40000, 55000, 'CDI'
-FROM companies c WHERE c.name = 'Berger-Levrault';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'IoT Engineer Python / C++', c.id, c.city, 'Develop IoT data collection and analysis platforms.', false, 45000, 62000, 'CDI'
-FROM companies c WHERE c.name = 'Hardis Group';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Data Scientist Python', c.id, c.city, 'Analyze manufacturing data with Pandas and machine learning models.', true, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'Braincube';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Game Developer C++', c.id, c.city, 'Develop AAA game engine features with C++ and Unreal Engine.', false, 45000, 65000, 'CDI'
-FROM companies c WHERE c.name = 'Ubisoft';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), '3D Simulation Developer', c.id, c.city, 'Build 3D simulation software for industrial applications.', false, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'Dassault Systèmes';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Cybersecurity Engineer', c.id, c.city, 'Implement security solutions and conduct penetration testing.', false, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Orange';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'API Developer Spring Boot', c.id, c.city, 'Build and maintain REST APIs for insurance platforms.', false, 50000, 68000, 'CDI'
-FROM companies c WHERE c.name = 'AXA';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Data Platform Engineer', c.id, c.city, 'Design data platforms with Hadoop and Spark for energy analytics.', true, 55000, 75000, 'CDI'
-FROM companies c WHERE c.name = 'Total Energies';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Consultant Technique Kotlin', c.id, c.city, 'Accompagner les clients dans la modernisation de leurs backends Kotlin.', true, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'Ippon Technologies';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Développeur Quarkus', c.id, c.city, 'Développer des microservices cloud-native avec Quarkus et GraalVM.', true, 48000, 65000, 'CDI'
-FROM companies c WHERE c.name = 'Xebia';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Frontend Developer Vue.js', c.id, c.city, 'Build reactive dashboards and admin panels with Vue.js and Nuxt.', true, 45000, 60000, 'CDI'
-FROM companies c WHERE c.name = 'Platform.sh';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Ingénieur Big Data', c.id, c.city, 'Concevoir des pipelines big data avec Kafka et Cassandra.', false, 50000, 70000, 'CDI'
-FROM companies c WHERE c.name = 'BNP Paribas';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Développeur RPA Python', c.id, c.city, 'Automatiser les processus métier avec Python et des outils RPA.', false, 42000, 58000, 'CDD'
-FROM companies c WHERE c.name = 'Crédit Agricole CIB';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Stagiaire Développeur React', c.id, c.city, 'Participer au développement d''une application web interne en React.', false, 8000, 12000, 'INTERNSHIP'
-FROM companies c WHERE c.name = 'Alan';
-
-INSERT INTO job_offers (id, title, company_id, location, description, remote, salary_min, salary_max, contract_type)
-SELECT gen_random_uuid(), 'Alternant DevOps', c.id, c.city, 'Apprendre et mettre en place des pipelines CI/CD avec GitHub Actions.', false, 14000, 18000, 'APPRENTICESHIP'
-FROM companies c WHERE c.name = 'BlaBlaCar';
+SELECT gen_random_uuid(), v.title, c.id, a.city, v.description, v.remote, v.smin, v.smax, v.ctype::contract_type
+FROM (VALUES
+    ('Senior Kotlin Backend Engineer',       'Agate IT',            'Design and implement scalable microservices with Kotlin and Spring Boot.',                       true,  60000, 75000,  'CDI'),
+    ('Fullstack Developer Vue / Java',        'Qonto',               'Build modern SaaS features with Vue.js and Spring Boot.',                                        true,  55000, 70000,  'CDI'),
+    ('DevOps Engineer AWS',                   'Doctolib',            'Maintain Kubernetes clusters and CI/CD pipelines on AWS.',                                       true,  65000, 85000,  'CDI'),
+    ('Frontend Engineer React',               'Back Market',         'Develop scalable UI components with React and TypeScript.',                                      true,  50000, 65000,  'CDI'),
+    ('Software Architect',                    'Thales',              'Lead architecture design across distributed systems.',                                           false, 75000, 95000,  'CDI'),
+    -- 50 new job offers
+    ('Backend Developer Python',              'Algolia',             'Develop and maintain Python microservices with Django and FastAPI.',                             true,  50000, 65000,  'CDI'),
+    ('SRE Engineer',                          'Criteo',              'Ensure reliability and performance of production systems at scale.',                             true,  65000, 85000,  'CDI'),
+    ('Data Engineer Spark',                   'Dataiku',             'Build and optimize data pipelines using Spark and Kafka.',                                       true,  55000, 75000,  'CDI'),
+    ('Mobile Developer Flutter',              'Swile',               'Create cross-platform mobile apps with Flutter and Dart.',                                       true,  45000, 60000,  'CDI'),
+    ('Fullstack Developer React / Node.js',   'Payfit',              'Build end-to-end features with React and Express.js.',                                           true,  50000, 68000,  'CDI'),
+    ('Cloud Architect AWS',                   'OVHcloud',            'Design cloud-native architectures on AWS with Terraform and Kubernetes.',                        true,  70000, 90000,  'CDI'),
+    ('Machine Learning Engineer',             'ContentSquare',       'Develop and deploy ML models with PyTorch and TensorFlow.',                                      true,  60000, 80000,  'CDI'),
+    ('Java Backend Developer',                'Sopra Steria',        'Develop robust backend services with Java and Spring Boot.',                                     false, 45000, 60000,  'CDI'),
+    ('DevSecOps Engineer',                    'Atos',                'Integrate security into CI/CD pipelines with SonarQube and GitLab CI.',                         true,  55000, 72000,  'CDI'),
+    ('Angular Frontend Developer',            'Capgemini',           'Build enterprise web applications with Angular and TypeScript.',                                 false, 42000, 58000,  'CDI'),
+    ('Rust Systems Developer',                'Safran',              'Develop high-performance embedded systems with Rust and C++.',                                   false, 55000, 75000,  'CDI'),
+    ('Scala Data Engineer',                   'Spotify',             'Build real-time data processing pipelines with Scala and Spark.',                                true,  60000, 80000,  'CDI'),
+    ('Go Backend Developer',                  'Revolut',             'Design and build high-throughput APIs in Go.',                                                   true,  55000, 75000,  'CDI'),
+    ('React Native Mobile Developer',         'N26',                 'Develop the mobile banking app with React Native.',                                              true,  50000, 70000,  'CDI'),
+    ('Platform Engineer Kubernetes',          'Scaleway',            'Build and maintain internal developer platforms with Kubernetes and Helm.',                      true,  60000, 80000,  'CDI'),
+    ('PHP Backend Developer',                 'ManoMano',            'Maintain and evolve e-commerce platform with PHP and Symfony.',                                  true,  42000, 55000,  'CDI'),
+    ('QA Automation Engineer',                'Spendesk',            'Design and implement automated test suites with Cypress and Selenium.',                          true,  45000, 60000,  'CDI'),
+    ('C++ Embedded Developer',                'Airbus',              'Develop firmware and embedded software for aerospace systems.',                                  false, 50000, 70000,  'CDI'),
+    ('Fullstack Developer .NET / Angular',    'Société Générale',    'Build internal tools with .NET backend and Angular frontend.',                                   false, 48000, 65000,  'CDI'),
+    ('Lead Developer Java',                   'Octo Technology',     'Lead a team of developers on Java/Spring microservices projects.',                               true,  65000, 85000,  'CDI'),
+    ('Consultant Cloud GCP',                  'Zenika',              'Advise clients on cloud migration strategies using GCP.',                                        true,  50000, 70000,  'CDI'),
+    ('Kotlin Android Developer',              'Deezer',              'Develop native Android applications with Kotlin.',                                               true,  45000, 62000,  'CDI'),
+    ('Frontend Engineer Svelte',              'AB Tasty',            'Build modern and reactive UIs with Svelte and TypeScript.',                                      true,  48000, 65000,  'CDI'),
+    ('Infrastructure Engineer Terraform',     'Devoteam',            'Manage infrastructure as code with Terraform and Ansible.',                                      true,  55000, 75000,  'CDI'),
+    ('Senior Ruby on Rails Developer',        'Vestiaire Collective', 'Build and scale marketplace features with Ruby on Rails.',                                      true,  55000, 72000,  'CDI'),
+    ('NestJS Backend Developer',              'Dailymotion',         'Design and implement APIs with NestJS and PostgreSQL.',                                          true,  48000, 65000,  'CDI'),
+    ('Elasticsearch Engineer',                'Numberly',            'Optimize search infrastructure with Elasticsearch at scale.',                                    true,  55000, 75000,  'CDI'),
+    ('Site Reliability Engineer',             'Google',              'Build observability and monitoring with Prometheus and Grafana.',                                 true,  70000, 95000,  'CDI'),
+    ('Software Engineer C#',                  'Microsoft',           'Develop cloud services with C# and Azure.',                                                      true,  65000, 90000,  'CDI'),
+    ('Backend Engineer Java / Kotlin',        'Amazon',              'Build large-scale distributed systems on AWS.',                                                  true,  65000, 90000,  'CDI'),
+    ('AI Research Engineer',                  'Meta',                'Research and develop cutting-edge AI models with PyTorch.',                                      true,  75000, 100000, 'CDI'),
+    ('iOS Developer Swift',                   'Apple',               'Develop native iOS applications with Swift and SwiftUI.',                                        false, 60000, 85000,  'CDI'),
+    ('Fullstack Developer Next.js',           'Zalando',             'Build e-commerce features with Next.js and GraphQL.',                                            true,  55000, 75000,  'CDI'),
+    ('Fintech Backend Developer Go',          'Klarna',              'Build payment processing services with Go and gRPC.',                                            true,  55000, 75000,  'CDI'),
+    ('Chatbot Developer Python',              'iAdvize',             'Build conversational AI solutions with Python and NLP frameworks.',                              true,  45000, 60000,  'CDI'),
+    ('ERP Developer Java',                    'Berger-Levrault',     'Develop and customize ERP solutions with Java and Spring.',                                      false, 40000, 55000,  'CDI'),
+    ('IoT Engineer Python / C++',             'Hardis Group',        'Develop IoT data collection and analysis platforms.',                                            false, 45000, 62000,  'CDI'),
+    ('Data Scientist Python',                 'Braincube',           'Analyze manufacturing data with Pandas and machine learning models.',                            true,  50000, 70000,  'CDI'),
+    ('Game Developer C++',                    'Ubisoft',             'Develop AAA game engine features with C++ and Unreal Engine.',                                   false, 45000, 65000,  'CDI'),
+    ('3D Simulation Developer',               'Dassault Systèmes',   'Build 3D simulation software for industrial applications.',                                      false, 50000, 70000,  'CDI'),
+    ('Cybersecurity Engineer',                'Orange',              'Implement security solutions and conduct penetration testing.',                                   false, 55000, 75000,  'CDI'),
+    ('API Developer Spring Boot',             'AXA',                 'Build and maintain REST APIs for insurance platforms.',                                          false, 50000, 68000,  'CDI'),
+    ('Data Platform Engineer',                'Total Energies',      'Design data platforms with Hadoop and Spark for energy analytics.',                              true,  55000, 75000,  'CDI'),
+    ('Consultant Technique Kotlin',           'Ippon Technologies',  'Accompagner les clients dans la modernisation de leurs backends Kotlin.',                        true,  50000, 70000,  'CDI'),
+    ('Développeur Quarkus',                   'Xebia',               'Développer des microservices cloud-native avec Quarkus et GraalVM.',                            true,  48000, 65000,  'CDI'),
+    ('Frontend Developer Vue.js',             'Platform.sh',         'Build reactive dashboards and admin panels with Vue.js and Nuxt.',                               true,  45000, 60000,  'CDI'),
+    ('Ingénieur Big Data',                    'BNP Paribas',         'Concevoir des pipelines big data avec Kafka et Cassandra.',                                      false, 50000, 70000,  'CDI'),
+    ('Développeur RPA Python',                'Crédit Agricole CIB', 'Automatiser les processus métier avec Python et des outils RPA.',                               false, 42000, 58000,  'CDD'),
+    ('Stagiaire Développeur React',           'Alan',                'Participer au développement d''une application web interne en React.',                           false, 8000,  12000,  'INTERNSHIP'),
+    ('Alternant DevOps',                      'BlaBlaCar',           'Apprendre et mettre en place des pipelines CI/CD avec GitHub Actions.',                         false, 14000, 18000,  'APPRENTICESHIP')
+) AS v(title, company_name, description, remote, smin, smax, ctype)
+JOIN companies c ON c.name = v.company_name
+JOIN addresses a ON a.id = c.address_id;
 
 INSERT INTO candidates (id, first_name, last_name, email) VALUES
           (gen_random_uuid(), 'Lucas', 'Martin', 'lucas.martin@gmail.com'),

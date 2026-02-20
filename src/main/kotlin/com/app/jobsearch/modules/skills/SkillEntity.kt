@@ -1,6 +1,5 @@
 package com.app.jobsearch.modules.skills
 
-import com.app.jobsearch.modules.joboffer.JobOffer
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.util.UUID
@@ -16,7 +15,4 @@ data class SkillEntity(
 
     @Column(nullable = false, unique = true)
     var name: String,
-
-    @ManyToMany(mappedBy = "skills")
-    var jobOffers: MutableSet<JobOffer> = mutableSetOf()
 )

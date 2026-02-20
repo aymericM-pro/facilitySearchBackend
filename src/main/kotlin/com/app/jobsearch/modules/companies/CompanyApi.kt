@@ -1,6 +1,8 @@
 package com.app.jobsearch.modules.companies
 
+import com.app.jobsearch.core.common.PageResponse
 import com.app.jobsearch.modules.companies.request.*
+import com.app.jobsearch.modules.joboffer.dto.JobOfferResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -37,4 +39,10 @@ interface CompanyApi {
 
     @Operation(summary = "Delete company")
     fun delete(id: UUID): ResponseEntity<Void>
+
+    @Operation(summary = "Get job offers for a company")
+    fun getJobOffers(
+        id: UUID,
+        @Parameter(hidden = true) pageable: Pageable
+    ): ResponseEntity<PageResponse<JobOfferResponse>>
 }
