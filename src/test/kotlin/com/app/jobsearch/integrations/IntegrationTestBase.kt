@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // Use a single instance of the test class to share state across tests
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
 
     @MockitoBean

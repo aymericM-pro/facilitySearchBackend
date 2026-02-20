@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 40px;
+            color: #222;
+        }
+
+        h1 {
+            text-align: center;
+            color: #967178;
+            margin-bottom: 5px;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .contact {
+            color: #a4a3a3;
+            font-size: 11px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .contact div {
+            margin-bottom: 3px;
+        }
+
+        h2 {
+            color: #967178;
+            font-size: 13px;
+            margin-top: 30px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #d6d6d6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .item {
+            margin-top: 15px;
+        }
+
+        .item-header {
+            display: table;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .item-header span:first-child {
+            display: table-cell;
+        }
+
+        .item-date {
+            display: table-cell;
+            text-align: right;
+            color: #967178;
+            font-weight: bold;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .item-sub {
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .item-description {
+            margin-top: 4px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        ul {
+            margin-top: 5px;
+            padding-left: 18px;
+        }
+
+        .separator {
+            margin-top: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${profile.name}"></h1>
+<div class="subtitle" th:text="${profile.title}"></div>
+
+<div class="contact">
+    <div>Email : <span th:text="${profile.email}"></span></div>
+    <div>Téléphone : <span th:text="${profile.phone}"></span></div>
+    <div th:if="${profile.linkedin}">
+        LinkedIn : <span th:text="${profile.linkedin}"></span>
+    </div>
+</div>
+
+<h2>Profil</h2>
+<p th:text="${profile.about}"></p>
+
+<h2>Expériences professionnelles</h2>
+
+<div th:each="exp : ${experiences}" class="item">
+    <div class="item-header">
+        <span th:text="${exp.role}"></span>
+        <span class="item-date"
+              th:text="${exp.startDate} + ' - ' + ${exp.endDate}"></span>
+    </div>
+
+    <div class="item-sub" th:text="${exp.location}"></div>
+
+    <div class="item-description" th:text="${exp.description}"></div>
+
+    <div class="separator"></div>
+</div>
+
+<h2>Formation</h2>
+
+<div th:each="edu : ${educations}" class="item">
+    <div class="item-header">
+        <span th:text="${edu.degree}"></span>
+        <span class="item-date"
+              th:text="${edu.startDate} + ' - ' + ${edu.endDate}"></span>
+    </div>
+
+    <div class="item-sub" th:text="${edu.school} + ' - ' + ${edu.location}"></div>
+
+    <div class="separator"></div>
+</div>
+
+<h2>Compétences</h2>
+<ul>
+    <li th:each="skill : ${profile.skills}" th:text="${skill}"></li>
+</ul>
+
+</body>
+</html>

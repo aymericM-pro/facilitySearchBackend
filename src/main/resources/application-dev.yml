@@ -6,9 +6,8 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
-
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
@@ -17,10 +16,16 @@ spring:
         order_inserts: true
         order_updates: true
 
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+
 jwt:
   secret: V7ZbHn5aX9kM2cR3tQp8YwU1eF4gH7jK2lN6oP9rT0s=
-  expiration: 86400000 # 24h en ms
-  refresh-expiration: 604800000 # 7 jours
+  expiration: 86400000
+  refresh-expiration: 604800000 #
 
 gcp:
   bucket: jobsearch-cv-bucket-dev
