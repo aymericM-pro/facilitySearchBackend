@@ -116,8 +116,16 @@
 
     <div class="item-sub" th:text="${exp.location}"></div>
 
-    <div class="item-description" th:text="${exp.description}"></div>
+    <div th:if="${exp.summary}"
+         class="item-description"
+         th:text="${exp.summary}">
+    </div>
 
+    <ul th:if="${exp.missions}">
+        <li th:each="mission : ${exp.missions}"
+            th:text="${mission}">
+        </li>
+    </ul>
     <div class="separator"></div>
 </div>
 

@@ -6,10 +6,10 @@ import java.util.UUID
 data class ExperienceResponse(
     val id: UUID,
     val profileId: UUID,
-    val companyId: UUID?,
     val role: String,
     val location: String?,
     val startDate: LocalDate,
     val endDate: LocalDate?,
-    val description: String?
+    val summary: String?,
+    val missions: List<String>
 )

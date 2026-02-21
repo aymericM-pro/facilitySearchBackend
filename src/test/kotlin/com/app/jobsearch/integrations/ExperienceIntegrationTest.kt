@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.LocalDate
 
 @Transactional
 class ExperienceIntegrationTest(
@@ -48,7 +49,14 @@ class ExperienceIntegrationTest(
 
         val updated = service.update(
             created.id,
-            ExperienceUpdateRequest(role = "Updated Role", location = null, startDate = null, endDate = null, description = null)
+            ExperienceUpdateRequest(
+                role = "Updated Role",
+                location = null,
+                startDate = null,
+                endDate = null,
+                summary = null,
+                missions = null
+            )
         )
 
         assertEquals("Updated Role", updated.role)
@@ -66,10 +74,11 @@ class ExperienceIntegrationTest(
 
     @Test
     fun testIntegrationInvalidDateRange() {
+        val request = fullRequest()
         assertThrows(BusinessException::class.java) {
             service.create(
-                fullRequest().copy(
-                    endDate = fullRequest().startDate.minusYears(1)
+                request.copy(
+                    endDate = request.startDate.minusYears(1)
                 )
             )
         }
@@ -78,12 +87,16 @@ class ExperienceIntegrationTest(
     private fun fullRequest() =
         ExperienceCreateRequest(
             profileId = profile.id!!,
-            companyId = null,
             role = "Backend Developer",
             location = "Paris",
-            startDate = java.time.LocalDate.of(2022, 1, 1),
-            endDate = java.time.LocalDate.of(2023, 1, 1),
-            description = "Spring Boot, Kotlin"
+            startDate = LocalDate.of(2022, 1, 1),
+            endDate = LocalDate.of(2023, 1, 1),
+            summary = "Développement d'une API backend en Kotlin / Spring Boot",
+            missions = listOf(
+                "Conception d'APIs REST",
+                "Mise en place de tests unitaires",
+                "Dockerisation de l'application"
+            )
         )
 
     private fun assertExperience(actual: ExperienceResponse, expected: ExperienceCreateRequest) {
@@ -93,6 +106,7 @@ class ExperienceIntegrationTest(
         assertEquals(expected.location, actual.location)
         assertEquals(expected.startDate, actual.startDate)
         assertEquals(expected.endDate, actual.endDate)
-        assertEquals(expected.description, actual.description)
+        assertEquals(expected.summary, actual.summary)
+        assertEquals(expected.missions, actual.missions)
     }
 }

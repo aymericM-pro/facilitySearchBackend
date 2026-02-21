@@ -11,8 +11,7 @@ import java.util.UUID
 class ExperienceService(
     private val repository: ExperienceRepository,
     private val mapper: ExperienceMapper,
-    private val profileRepository: ProfileRepository,
-    private val companyRepository: CompanyRepository
+    private val profileRepository: ProfileRepository
 ) {
 
     fun create(request: ExperienceCreateRequest): ExperienceResponse {
@@ -28,11 +27,8 @@ class ExperienceService(
         val profile = profileRepository.findById(request.profileId)
             .orElseThrow { BusinessException(ExperienceError.PROFILE_NOT_FOUND) }
 
-        val company = request.companyId?.let {
-            companyRepository.findById(it).orElse(null)
-        }
+        val entity = mapper.toEntity(request, profile)
 
-        val entity = mapper.toEntity(request, profile, company)
         return mapper.toResponse(repository.save(entity))
     }
 
@@ -50,7 +46,8 @@ class ExperienceService(
         profileRepository.findById(profileId)
             .orElseThrow { BusinessException(ExperienceError.PROFILE_NOT_FOUND) }
 
-        return repository.findByProfileId(profileId).map { mapper.toResponse(it) }
+        return repository.findByProfileId(profileId)
+            .map { mapper.toResponse(it) }
     }
 
     fun update(id: UUID, request: ExperienceUpdateRequest): ExperienceResponse {

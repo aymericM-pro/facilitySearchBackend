@@ -7,5 +7,6 @@ data class ExperienceUpdateRequest(
     val location: String?,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
-    val description: String?
+    val summary: String?,
+    val missions: List<String>?
 )

@@ -33,5 +33,16 @@ data class ExperienceEntity(
 
     var endDate: LocalDate? = null,
 
-    var description: String? = null
+    var description: String? = null,
+
+    @Column(columnDefinition = "TEXT")
+    var summary: String? = null,
+
+    @ElementCollection
+    @CollectionTable(
+        name= "experience_missions",
+        joinColumns = [JoinColumn(name = "experience_id")]
+    )
+    @Column(name = "mission", columnDefinition = "TEXT")
+    var missions: List<String> = emptyList(),
 )
